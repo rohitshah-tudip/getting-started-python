@@ -12,6 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import datetime
+
+from dateutil import parser
 # [START bookshelf_firestore_client_import]
 from google.cloud import firestore
 # [END bookshelf_firestore_client_import]
@@ -20,9 +23,23 @@ from google.cloud import firestore
 def document_to_dict(doc):
     if not doc.exists:
         return None
-    doc_dict = doc.to_dict()
-    doc_dict['id'] = doc.id
-    return doc_dict
+    data = doc.to_dict()
+    data['id'] = doc.id
+    if ('publishedDate' in data and
+            isinstance(data['publishedDate'], datetime.datetime)):
+        publishedDate = data['publishedDate'].strftime('%Y-%m-%d')
+        data['publishedDate'] = publishedDate
+    return data
+
+
+def format_data(data):
+    if 'publishedDate' in data:
+        try:
+            publishedDate = parser.parse(data['publishedDate'])
+            data['publishedDate'] = publishedDate
+        except parser._parser.ParserError:
+            data['publishedDate'] = ''
+    return data
 
 
 def next_page(limit=10, start_after=None):
@@ -56,7 +73,7 @@ def read(id):
 def update(data, id=None):
     db = firestore.Client()
     book_ref = db.collection(u'Book').document(id)
-    book_ref.set(data)
+    book_ref.set(format_data(data))
     return document_to_dict(book_ref.get())
 
 

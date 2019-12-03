@@ -95,7 +95,7 @@ def test_add(app):
     data = {
         'title': 'Test Book',
         'author': 'Test Author',
-        'publishedDate': 'Test Date Published',
+        'publishedDate': '2020/01/01',
         'description': 'Test Description'
     }
 
@@ -106,7 +106,7 @@ def test_add(app):
     body = rv.data.decode('utf-8')
     assert 'Test Book' in body
     assert 'Test Author' in body
-    assert 'Test Date Published' in body
+    assert '2020-01-01' in body
     assert 'Test Description' in body
 
 
@@ -141,7 +141,7 @@ def test_upload_image(app):
     data = {
         'title': 'Test Book',
         'author': 'Test Author',
-        'publishedDate': 'Test Date Published',
+        'publishedDate': '2020/01/01',
         'description': 'Test Description',
         'image': (BytesIO(b'hello world'), 'hello.jpg')
     }
@@ -163,7 +163,7 @@ def test_upload_bad_file(app):
     data = {
         'title': 'Test Book',
         'author': 'Test Author',
-        'publishedDate': 'Test Date Published',
+        'publishedDate': '2020/01/01',
         'description': 'Test Description',
         'image': (BytesIO(b'<?php phpinfo(); ?>'),
                   '1337h4x0r.php')
